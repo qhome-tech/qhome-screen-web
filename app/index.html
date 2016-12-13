@@ -1,0 +1,101 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>xank webtool</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
+  <!-- build:css styles/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="/bower_components/lightgallery/dist/css/lightgallery.css" />
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
+  <!-- build:js scripts/vendor/modernizr.js -->
+  <script src="/bower_components/modernizr/modernizr.js"></script>
+  <!-- endbuild -->
+
+
+  <!-- build:js scripts/vendor.js -->
+  <!-- bower:js -->
+  <script src="../bower_components/modernizr/modernizr.js"></script>
+  <script src="../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../bower_components/ifvisible.js/src/ifvisible.js"></script>
+  <script src="../bower_components/lightgallery/lib/jquery.mousewheel.min.js"></script>
+  <script src="../bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+  <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../bower_components/angular-route/angular-route.js"></script>
+  <script src="../bower_components/angular-animate/angular-animate.js"></script>
+  <script src="../bower_components/ng-websocket/ng-websocket.js"></script>
+
+  <script src="../bower_components/angular-uuid/uuid.js"></script>
+
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:js scripts/plugins.js -->
+
+  <!-- endbuild -->
+  <!-- build:js scripts/main.js -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/main.js"></script>
+  <script src="scripts/index.js"></script>
+  <!-- endbuild -->
+
+</head>
+
+<body  data-ng-app="app" ng-controller="appCtrl">
+
+  <div class="container" ng-controller="homeCtrl">
+
+
+
+    <!-- <p>{{host}}</p> -->
+
+    <div class="panel panel-xk panel-wea">
+      <h1>气温</h1>
+
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-6 col-t_box">
+            <h1>气温</h1>
+            <span class="t_num">28</span>
+          </div>
+          <div class="col-xs-6 col-t_box">
+            <h1>湿度</h1>
+            <span class="t_num">28</span>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="panel panel-xk">
+      <h1>这么晚了</h1>
+      <h1>你在干嘛？</h1>
+
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  <div ng-controller="backdropCtrl">
+  {{$scope.backdrop}}
+    <div class="xk-backdrop" ng-class="{true:'in', false: 'as'}[backdrop.start]" ng-if="backdrop.open">
+    </div>
+  </div>
+
+
+</body>
+</html>

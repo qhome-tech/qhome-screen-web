@@ -1,0 +1,52 @@
+// $icon-font-path: '../fonts/';
+$color-main: #226086;
+@import "xankstrap/xankstrap.scss";
+@import "ele-mixin.scss";
+@import "ele-tool.scss";
+@import "fedcp/main.scss";
+@import "lightgallery/lightgallery.scss";
+.xk-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  transition: 1s;
+  opacity: 0;
+  &.in {
+    opacity: 1;
+  }
+}
+
+body {
+  background: #000;
+
+}
+
+html{
+  font-size: 11px;
+}
+
+.panel-xk {
+  border: 2px solid rgba(255, 255, 255, .9);
+  background: rgba(0, 0, 0, 0);
+  min-height: 300px;
+  color: #FFF;
+  margin: 10px;
+
+
+}
+
+
+.panel-wea{
+
+  .col-t_box{
+    text-align: center;
+  }
+
+  span.t_num{
+    font-size: 120px;
+  }
+}
