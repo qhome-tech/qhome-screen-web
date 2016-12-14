@@ -4,6 +4,7 @@ $color-main: #226086;
 @import "ele-mixin.scss";
 @import "ele-tool.scss";
 @import "fedcp/main.scss";
+@import "plus/snow.scss";
 @import "lightgallery/lightgallery.scss";
 .xk-backdrop {
   position: fixed;
@@ -50,3 +51,5 @@ html{
     font-size: 120px;
   }
 }
+
+

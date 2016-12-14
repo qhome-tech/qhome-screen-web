@@ -5,6 +5,7 @@ angular.module('app', [
   'ngWebsocket'
   'app.main'
   "uuid"
+  'app.bg'
 ])
 
 
