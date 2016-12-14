@@ -1,0 +1,71 @@
+.bg-float {
+  @-webkit-keyframes backgroundAnimate {
+    from {
+      left: 0;
+      top: 0;
+    }
+    to {
+      left: -10000px;
+      top: -2000px;
+    }
+  }
+  @-moz-keyframes backgroundAnimate {
+    from {
+      left: 0;
+      top: 0;
+    }
+    to {
+      left: -10000px;
+      top: -2000px;
+    }
+  }
+  @-o-keyframes backgroundAnimate {
+    from {
+      left: 0;
+      top: 0;
+    }
+    to {
+      left: -10000px;
+      top: -2000px;
+    }
+  }
+  @keyframes backgroundAnimate {
+    from {
+      left: 0;
+      top: 0;
+    }
+    to {
+      left: -10000px;
+      top: -2000px;
+    }
+  }
+  .back {
+    background: url(../images/bg/back.png) repeat 20% 20%;
+    background: rgb(31,46,61);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.4;
+    z-index: -1;
+    animation-name: backgroundAnimate;
+    animation-duration: 500s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  .front {
+    background: url(../images/bg/front.png) repeat 35% 35%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.6;
+    z-index: -1;
+    animation-name: backgroundAnimate;
+    animation-duration: 300s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+}

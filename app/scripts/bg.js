@@ -1,6 +1,10 @@
 (function() {
   'use strict';
-  angular.module('app.bg', []).controller('adminCtrl', ['$scope', '$interval', '$window', '$websocket', function($scope, $interval, $window, $websocket) {}]).controller('bgCtrl', ['$scope', '$interval', '$window', 'ws', '$rootScope', function($scope, $interval, $window, ws, $rootScope) {}]).directive('bgSnow', [
+  angular.module('app.bg', []).controller('adminCtrl', ['$scope', '$interval', '$window', '$websocket', function($scope, $interval, $window, $websocket) {}]).controller('bgCtrl', [
+    '$scope', '$interval', '$window', 'ws', '$rootScope', function($scope, $interval, $window, ws, $rootScope) {
+      return $scope.name = 'snow';
+    }
+  ]).directive('bgSnow', [
     '$rootScope', function($rootScope) {
       return {
         template: function(ele, attrs) {
@@ -10,6 +14,7 @@
         },
         restrict: 'AEC',
         link: function(scope, ele, attrs) {
+          console.log('sd');
           return initSnow();
         }
       };

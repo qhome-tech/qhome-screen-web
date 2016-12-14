@@ -25,6 +25,7 @@
   <!-- bower:js -->
   <script src="../bower_components/modernizr/modernizr.js"></script>
   <script src="../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../bower_components/ifvisible.js/src/ifvisible.js"></script>
   <script src="../bower_components/lightgallery/lib/jquery.mousewheel.min.js"></script>
   <script src="../bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
   <script src="../bower_components/angular/angular.min.js"></script>
@@ -35,12 +36,13 @@
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:js scripts/plugins.js -->
-
   <!-- endbuild -->
   <!-- build:js scripts/main.js -->
   <script src="scripts/app.js"></script>
   <script src="scripts/main.js"></script>
   <script src="scripts/index.js"></script>
+  <script src="scripts/bg.js"></script>
+  <script src="scripts/plus_bg/snow.js"></script>
   <!-- endbuild -->
 
 </head>
@@ -68,8 +70,12 @@
             <a href="" class="btn btn-lg btn-default" ng-click="lcdClose()">关闭显示器</a>
             <a href="" class="btn btn-lg btn-default" ng-click="lcdOpen()">开启显示器</a>
 
+            <a href="" class="btn btn-lg btn-default" ng-click="setBg('snow')">设置背景</a>
+            <a href="" class="btn btn-lg btn-default" ng-click="setBg('float')">设置背景2</a>
+
           </div>
         </div>
+        <hr>
       </div>
     </section>
   </div>

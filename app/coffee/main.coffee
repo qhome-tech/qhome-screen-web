@@ -17,6 +17,7 @@ angular.module('app.main', [])
   '$scope', '$interval', '$window', 'ws', '$rootScope'
   ($scope, $interval, $window, ws, $rootScope) ->
 
+    $scope.bgName = 'snow'
 
     $scope.host =
       cid : 'cid'
@@ -51,6 +52,12 @@ angular.module('app.main', [])
         else if _action == 'lcdOpen'
 
           $rootScope.$emit('lcd-open')
+
+        else if _action == 'setBg'
+          console.log msg.data.val
+          $scope.$apply ->
+
+            $scope.bgName = msg.data.val
 
 
 ])
@@ -87,6 +94,8 @@ angular.module('app.main', [])
         $scope.backdrop.open = false
 
       $timeout(fn, 500)
+
+
 
 
     ifvisible.setIdleDuration(500)
@@ -172,17 +181,14 @@ angular.module('app.main', [])
 
       ws.$emit('login',  _data)
 
+    $scope.setBg = (name) ->
+      args =
+        hid : '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
+        cid: CID
+        action: 'setBg'
+        val: name
 
-
-
-
-
-
-
-
-
-
-
+      ws.$emit('hostMsg', args)
 
 
 
@@ -199,7 +205,7 @@ angular.module('app.main', [])
   '$websocket'
   ($websocket) ->
 
-    ws = $websocket.$new('ws://localhost:8181');
+    ws = $websocket.$new('ws://192.168.31.101:8181');
     return ws
 
 ])

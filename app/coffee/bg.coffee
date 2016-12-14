@@ -17,6 +17,9 @@ angular.module('app.bg', [])
   '$scope', '$interval', '$window', 'ws', '$rootScope'
   ($scope, $interval, $window, ws, $rootScope) ->
 
+    $scope.name = 'snow'
+
+
 
 ])
 
@@ -102,6 +105,7 @@ angular.module('app.bg', [])
       restrict: 'AEC'
       link: (scope, ele, attrs) ->
 
+        console.log 'sd'
         initSnow()
     }
 ])

@@ -2,6 +2,7 @@
   'use strict';
   angular.module('app.main', []).controller('adminCtrl', ['$scope', '$interval', '$window', '$websocket', function($scope, $interval, $window, $websocket) {}]).controller('homeCtrl', [
     '$scope', '$interval', '$window', 'ws', '$rootScope', function($scope, $interval, $window, ws, $rootScope) {
+      $scope.bgName = 'snow';
       $scope.host = {
         cid: 'cid',
         hid: 'hid'
@@ -26,6 +27,11 @@
             return $rootScope.$emit('lcd-close');
           } else if (_action === 'lcdOpen') {
             return $rootScope.$emit('lcd-open');
+          } else if (_action === 'setBg') {
+            console.log(msg.data.val);
+            return $scope.$apply(function() {
+              return $scope.bgName = msg.data.val;
+            });
           }
         }
       });
@@ -126,7 +132,7 @@
         name = 'sd';
         return ws.$emit('nick', name);
       };
-      return $scope.login = function() {
+      $scope.login = function() {
         var _data;
         _data = {
           email: 'xank@qq.com',
@@ -135,11 +141,21 @@
         };
         return ws.$emit('login', _data);
       };
+      return $scope.setBg = function(name) {
+        var args;
+        args = {
+          hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01',
+          cid: CID,
+          action: 'setBg',
+          val: name
+        };
+        return ws.$emit('hostMsg', args);
+      };
     }
   ]).factory('ws', [
     '$websocket', function($websocket) {
       var ws;
-      ws = $websocket.$new('ws://localhost:8181');
+      ws = $websocket.$new('ws://192.168.31.101:8181');
       return ws;
     }
   ]);

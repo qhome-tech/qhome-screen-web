@@ -1,0 +1,28 @@
+.animate-switch-container {
+  // position: relative;
+  // overflow: hidden;
+}
+
+.animate-switch {
+  &.ng-animate {
+    transition: 3s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  &.ng-leave,
+  &.ng-enter.ng-enter-active {
+    // top: 0;
+    opacity: 1;
+  }
+  &.ng-leave.ng-leave-active {
+    // top: 100%;
+    opacity: 0;
+  }
+  &.ng-enter {
+    opacity: 0;
+    // top: -100%;
+  }
+}

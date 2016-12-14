@@ -1,10 +1,12 @@
 function initSnow() {
   time = 0;
   count = 0;
-  arc = 500
+  arc = 100
   lights = []
 
   canvas = document.getElementById('snow')
+
+  canvas.fillStyle= 'rgba(0,0,0,0)';
 
 
   ctx = canvas.getContext('2d')
