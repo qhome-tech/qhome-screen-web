@@ -19,8 +19,6 @@
   <!-- build:js scripts/vendor/modernizr.js -->
   <script src="/bower_components/modernizr/modernizr.js"></script>
   <!-- endbuild -->
-
-
   <!-- build:js scripts/vendor.js -->
   <!-- bower:js -->
   <script src="../bower_components/modernizr/modernizr.js"></script>
@@ -40,47 +38,55 @@
   <!-- build:js scripts/main.js -->
   <script src="scripts/app.js"></script>
   <script src="scripts/main.js"></script>
+  <script src="scripts/admin.js"></script>
   <script src="scripts/index.js"></script>
   <script src="scripts/bg.js"></script>
   <script src="scripts/plus_bg/snow.js"></script>
   <!-- endbuild -->
-
 </head>
 
-<body  data-ng-app="app" ng-controller="appCtrl">
-
+<body data-ng-app="app" ng-controller="appCtrl">
   <div class="container" ng-controller="adminCtrl">
     <section class="panel">
       <div class="panel-heading">
         操作
       </div>
-      <div class="panel-body">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="" class="btn btn-default" ng-click="login()">登录</a>
+        </li>
+        <li class="list-group-item"><a href="" class="btn btn-default" ng-click="send()">发送</a></li>
+        <li class="list-group-item">
+          <a href="" class="btn btn-default" ng-click="lcdClose()">关闭显示器</a>
+          <a href="" class="btn btn-primary" ng-click="lcdOpen()">开启显示器</a>
+        </li>
+        <li class="list-group-item">
+          <a href="" class="btn btn-default" ng-click="setBg('')">清除背景</a>
+          <a href="" class="btn btn-default" ng-click="setBg('snow')">设置背景1</a>
+          <a href="" class="btn btn-default" ng-click="setBg('float')">设置背景2</a>
+        </li>
+      </ul>
+    </section>
 
-        <div class="row">
-          <div class="col-xs-12">
-            <a href="" class="btn btn-lg btn-default" ng-click="login()">登录</a>
-          </div>
-          <div class="col-xs-12">
-            <a href="" class="btn btn-lg btn-default" ng-click="send()">发送</a>
 
-            <a href="" class="btn btn-lg btn-default" ng-click="test1()">TEST1</a>
-          </div>
-          <div class="col-xs-12">
 
-            <a href="" class="btn btn-lg btn-default" ng-click="lcdClose()">关闭显示器</a>
-            <a href="" class="btn btn-lg btn-default" ng-click="lcdOpen()">开启显示器</a>
-
-            <a href="" class="btn btn-lg btn-default" ng-click="setBg('snow')">设置背景</a>
-            <a href="" class="btn btn-lg btn-default" ng-click="setBg('float')">设置背景2</a>
-
-          </div>
-        </div>
-        <hr>
+    <section class="panel">
+      <div class="panel-heading">
+        推送
+      </div>
+      <div class="list-group">
+        <ul class="list-group">
+          <li class="list-group-item">
+            <a class="btn btn-default" ng-click="push(0)">文字</a>
+            <a class="btn btn-default" ng-click="push(1)">文字</a>
+            <p>{{panelNum}}</p>
+          </li>
+        </ul>
       </div>
     </section>
   </div>
 
-
+  </div>
 </body>
 
 </html>

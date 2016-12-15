@@ -1,23 +1,12 @@
 'use strict';
-
 angular.module('app.bg', [])
 
-.controller('adminCtrl', [
-  '$scope', '$interval', '$window', '$websocket'
-  ($scope, $interval, $window, $websocket) ->
-
-
-
-
-])
 
 
 
 .controller('bgCtrl', [
   '$scope', '$interval', '$window', 'ws', '$rootScope'
   ($scope, $interval, $window, ws, $rootScope) ->
-
-    $scope.name = 'snow'
 
 
 

@@ -1,10 +1,6 @@
 (function() {
   'use strict';
-  angular.module('app.bg', []).controller('adminCtrl', ['$scope', '$interval', '$window', '$websocket', function($scope, $interval, $window, $websocket) {}]).controller('bgCtrl', [
-    '$scope', '$interval', '$window', 'ws', '$rootScope', function($scope, $interval, $window, ws, $rootScope) {
-      return $scope.name = 'snow';
-    }
-  ]).directive('bgSnow', [
+  angular.module('app.bg', []).controller('bgCtrl', ['$scope', '$interval', '$window', 'ws', '$rootScope', function($scope, $interval, $window, ws, $rootScope) {}]).directive('bgSnow', [
     '$rootScope', function($rootScope) {
       return {
         template: function(ele, attrs) {

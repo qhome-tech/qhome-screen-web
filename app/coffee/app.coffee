@@ -4,6 +4,7 @@ angular.module('app', [
   'ngAnimate'
   'ngWebsocket'
   'app.main'
+  'app.admin'
   "uuid"
   'app.bg'
 ])

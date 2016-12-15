@@ -1,5 +1,5 @@
 (function() {
   'use strict';
-  angular.module('app', ['ngRoute', 'ngAnimate', 'ngWebsocket', 'app.main', "uuid", 'app.bg']).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {}]);
+  angular.module('app', ['ngRoute', 'ngAnimate', 'ngWebsocket', 'app.main', 'app.admin', "uuid", 'app.bg']).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {}]);
 
 }).call(this);

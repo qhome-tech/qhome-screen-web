@@ -1,26 +1,30 @@
 (function() {
   'use strict';
-  angular.module('app.main', []).controller('adminCtrl', ['$scope', '$interval', '$window', '$websocket', function($scope, $interval, $window, $websocket) {}]).controller('homeCtrl', [
-    '$scope', '$interval', '$window', 'ws', '$rootScope', function($scope, $interval, $window, ws, $rootScope) {
-      $scope.bgName = 'snow';
+  angular.module('app.main', []).controller('homeCtrl', [
+    '$scope', '$interval', '$window', 'ws', '$rootScope', 'wsSend', function($scope, $interval, $window, ws, $rootScope, wsSend) {
+      new WOW().init();
+      $scope.bgName = '';
       $scope.host = {
         cid: 'cid',
         hid: 'hid'
       };
       return ws.$on('$message', function(msg) {
-        var CID, _action, args;
+        var CID, _action, _data, args;
         CID = $rootScope.CID;
+        _data = msg.data;
         if (msg.event === 'host') {
           args = {
-            hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01',
-            cid: CID
+            hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
           };
-          return ws.$emit('loginHost', args);
+          return wsSend.msg('loginHost', args);
         } else if (msg.event === 'loginHost') {
-          console.log(msg.data);
-          return $scope.$apply(function() {
+          $scope.$apply(function() {
             return $scope.host = msg.data;
           });
+          args = {
+            action: 'get-panel'
+          };
+          return wsSend.msg('hostMsg', args);
         } else if (msg.event === 'hostMsg') {
           _action = msg.data.action;
           if (_action === 'lcdClose') {
@@ -28,13 +32,112 @@
           } else if (_action === 'lcdOpen') {
             return $rootScope.$emit('lcd-open');
           } else if (_action === 'setBg') {
-            console.log(msg.data.val);
             return $scope.$apply(function() {
               return $scope.bgName = msg.data.val;
             });
+          } else if (_action === 'panel') {
+            return $scope.$broadcast('new-panel', _data);
           }
         }
       });
+    }
+  ]).controller('panelsCtrl', [
+    '$scope', '$interval', '$window', '$rootScope', '$timeout', 'wsSend', function($scope, $interval, $window, $rootScope, $timeout, wsSend) {
+      var EQ, focesAnimate, focosEq, nowEQ, panelLoad, startFocus;
+      EQ = 0;
+      focesAnimate = false;
+      $scope.panel = [
+        {
+          open: true,
+          text: '测试',
+          focus: true,
+          eq: 0,
+          type: 0
+        }
+      ];
+      nowEQ = 1;
+      $scope.$on('new-panel', function(event, msg) {
+        var db, index, j, len, ref;
+        ref = msg.data;
+        for (index = j = 0, len = ref.length; j < len; index = ++j) {
+          db = ref[index];
+          $scope.$apply(function() {
+            db.open = false;
+            db.focus = 0;
+            db.eq = nowEQ;
+            return $scope.panel.push(db);
+          });
+          nowEQ = nowEQ + 1;
+        }
+        return panelLoad();
+      });
+      panelLoad = function() {
+        var args, db, i, index, isNext, j, len, ref;
+        i = 0;
+        isNext = false;
+        ref = $scope.panel;
+        for (index = j = 0, len = ref.length; j < len; index = ++j) {
+          db = ref[index];
+          if (db.focus) {
+            isNext = true;
+          }
+          if (isNext) {
+            $scope.$apply(function() {
+              db.open = true;
+              return db.delay = i + 's';
+            });
+            i = i + 0.1;
+          }
+        }
+        args = {
+          val: $scope.panel.length,
+          action: 'panel-num'
+        };
+        wsSend.msg('clientMsg', args);
+        if ($scope.panel.length > 1) {
+          if (!focesAnimate) {
+            return startFocus();
+          }
+        }
+      };
+      focosEq = 0;
+      return startFocus = function() {
+        var fn, focusCtrl;
+        focesAnimate = true;
+        fn = function() {
+          var args;
+          console.log($scope.panel.length);
+          console.log(focosEq + '-' + nowEQ);
+          if ($scope.panel.length === 4) {
+            $interval.cancel(focusCtrl);
+            focesAnimate = false;
+            return;
+          }
+          if (focosEq > 0) {
+            $scope.panel[focosEq - 1]['focus'] = 0;
+          }
+          if (focosEq > 1) {
+            $scope.panel[focosEq - 2]['focus'] = 2;
+          }
+          if (focosEq > 2) {
+            $scope.panel[focosEq - 3]['open'] = false;
+          }
+          if (focosEq > 3) {
+            $scope.panel.splice(focosEq - 4, 1);
+            focosEq = focosEq - 1;
+          }
+          $scope.panel[focosEq]['focus'] = 1;
+          $scope.panel[focosEq]['delay'] = 0;
+          focosEq = focosEq + 1;
+          if ($scope.panel.length < 7) {
+            args = {
+              action: 'get-panel'
+            };
+            return wsSend.msg('hostMsg', args);
+          }
+        };
+        return focusCtrl = $interval(fn, 1500);
+      };
     }
   ]).controller('backdropCtrl', [
     '$scope', '$interval', '$window', '$rootScope', '$timeout', function($scope, $interval, $window, $rootScope, $timeout) {
@@ -71,92 +174,56 @@
       });
     }
   ]).controller('appCtrl', [
-    '$scope', '$interval', '$window', 'ws', '$timeout', 'uuid4', '$rootScope', function($scope, $interval, $window, ws, $timeout, uuid4, $rootScope) {
-      var CID, fn;
+    '$scope', '$interval', '$window', 'ws', '$timeout', 'uuid4', '$rootScope', 'wsSend', function($scope, $interval, $window, ws, $timeout, uuid4, $rootScope, wsSend) {
+      var CID, HID, fn;
       CID = uuid4;
+      HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01';
       $rootScope.CID = CID;
+      $rootScope.HID = HID;
       fn = function() {
         return $scope.$emit('lcd-close');
       };
       ws.$on('$open', function(msg) {
         var args;
-        args = {
-          cid: CID
-        };
-        return ws.$emit('init', args);
+        args = {};
+        return wsSend.msg('init', args);
       });
       ws.$on('$close', function(msg) {
         return console.log('服务器关闭');
       });
-      ws.$on('$message', function(msg) {
-        var args;
-        console.log(JSON.stringify(msg));
+      return ws.$on('$message', function(msg) {
+        var AID, args;
+        console.log('%c< ' + msg.event + ' - ' + JSON.stringify(msg), 'color:green');
+        AID = msg.data.cid;
+        $rootScope.AID = AID;
         if (msg.event === 'init') {
           args = {
             email: 'xank@qq.com',
-            pwd: 'cs1234',
-            cid: CID
+            pwd: 'cs1234'
           };
-          return ws.$emit('login', args);
+          return wsSend.msg('login', args);
         }
       });
-      $scope.send = function() {
-        var args;
-        args = {
-          hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01',
-          cid: CID,
-          data: 'test'
-        };
-        return ws.$emit('hostMsg', args);
-      };
-      $scope.lcdClose = function() {
-        var args;
-        args = {
-          hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01',
-          cid: CID,
-          action: 'lcdClose'
-        };
-        return ws.$emit('hostMsg', args);
-      };
-      $scope.lcdOpen = function() {
-        var args;
-        args = {
-          hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01',
-          cid: CID,
-          action: 'lcdOpen'
-        };
-        return ws.$emit('hostMsg', args);
-      };
-      $scope.test1 = function() {
-        var name;
-        name = 'sd';
-        return ws.$emit('nick', name);
-      };
-      $scope.login = function() {
-        var _data;
-        _data = {
-          email: 'xank@qq.com',
-          pwd: 'cs1234',
-          cid: CID
-        };
-        return ws.$emit('login', _data);
-      };
-      return $scope.setBg = function(name) {
-        var args;
-        args = {
-          hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01',
-          cid: CID,
-          action: 'setBg',
-          val: name
-        };
-        return ws.$emit('hostMsg', args);
-      };
     }
   ]).factory('ws', [
     '$websocket', function($websocket) {
       var ws;
       ws = $websocket.$new('ws://192.168.31.101:8181');
       return ws;
+    }
+  ]).factory('wsSend', [
+    'ws', '$rootScope', function(ws, $rootScope) {
+      return {
+        msg: function(event, args) {
+          args.cid = $rootScope.CID;
+          args.aid = $rootScope.AID;
+          if (event === 'hostMsg') {
+            args.hid = $rootScope.HID;
+          }
+          console.log('> ' + event + ' - ' + JSON.stringify(args));
+          return ws.$emit(event, args);
+        }
+      };
     }
   ]);
 

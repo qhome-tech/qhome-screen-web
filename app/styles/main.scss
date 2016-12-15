@@ -3,16 +3,15 @@ $color-main: #226086;
 @import "xankstrap/xankstrap.scss";
 @import "ele-mixin.scss";
 @import "ele-tool.scss";
-@import "fedcp/main.scss";
+@import "plus/animate.scss";
 @import "plus/bg_main.scss";
 @import "plus/bg_snow.scss";
 @import "plus/bg_floating.scss";
 @import "lightgallery/lightgallery.scss";
-
 body {
   background: #000;
-
 }
+
 .xk-backdrop {
   position: fixed;
   top: 0;
@@ -28,32 +27,76 @@ body {
   }
 }
 
-
-
-html{
+html {
   font-size: 11px;
 }
 
-.panel-xk {
-  border: 2px solid rgba(255, 255, 255, .9);
-  background: rgba(0, 0, 0, 0);
-  min-height: 300px;
-  color: #FFF;
-  margin: 10px;
+@keyframes border_blink {
+  0% {
+    border-color: $color-main;
+  }
+  50% {
+    border-color: rgba(255, 255, 255, .6);
+  }
+  100% {
+    border-color: $color-main;
+  }
+}
 
+body{
+
+   overflow:scroll;overflow-y:hidden
+}
+.panels {
+  padding: 15px 0;
+  overflow:scroll;overflow-y:hidden
 
 }
 
+.panel-xk {
+  background: rgba(0, 0, 0, 0);
+  color: #FFF;
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  overflow: hidden;
+  max-height: 200px;
+  transition: max-height 1s .3s;
+  .box {
+    border: 2px solid rgba(255, 255, 255, .3);
+    transition: border-color 1s;
+    margin-bottom: 10px;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+    padding: 30px;
 
-.panel-wea{
+    img{
+      width: 300px;
+    }
+    // display: table-cell;
+    width: 100%;
+    h1{
+      font-size: 120px;
+    }
+  }
+  &.focus {
+    max-height: 3000px;
+    .box {
+      animation: border_blink 1.75s cubic-bezier(.9, .15, .1, .85) infinite;
+    }
+  }
+  &.out {
+    max-height: 0px;
+    .box {}
+  }
+}
 
-  .col-t_box{
+.panel-wea {
+  .col-t_box {
     text-align: center;
   }
-
-  span.t_num{
+  span.t_num {
     font-size: 120px;
   }
 }
-
-
