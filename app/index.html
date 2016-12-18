@@ -83,15 +83,27 @@
       </div>
     </div>
  -->
- <!-- <div class="btn btn-default">获取推送</div> -->
+    <!-- <div class="btn btn-default">获取推送</div> -->
     <div class="panels" ng-controller="panelsCtrl">
-      <div class="panel panel-xk animated  fadeInUp" style="animation-delay:{{db.delay}}s;"  ng-class="{1: 'focus', 2: 'out'}[db.focus]" ng-repeat="db in panel" ng-if="db.open">
+      <div class="panel panel-xk animated fadeInUp" style="animation-delay:{{db.delay}}s;" ng-class="{1: 'focus', 2: 'out'}[db.focus]" ng-repeat="db in panel" ng-if="db.open">
         <div class="box" ng-if="db.type == 0">
           <h1>{{db.text}}</h1>
         </div>
         <div class="box" ng-if="db.type == 1">
-          <img ng-src="{{db.content.src}}" alt="">
-          <p>{{db.content.title}}</p>
+
+            <!-- <p>{{db.content.title}}</p> -->
+
+
+            <p class="p_title">{{db.content.title}}</p>
+            <span class="s_description">{{db.content.description}}</span>
+            <div class="img-box" style="background-image:url({{db.content.picUrl}})" ng-if="db.content.picUrl">
+              <!-- <img ng-src="" alt=""> -->
+              <!-- <span class="s_time">{{db.content.ctime | date : 'MM-dd h:mm:ss'}}</span> -->
+            </div>
+            <div class="btn-group">
+              <a class="btn-lg btn-primary btn" href="" ng-click="likePost(db.content.id)">收藏</a>
+            </div>
+
         </div>
       </div>
     </div>

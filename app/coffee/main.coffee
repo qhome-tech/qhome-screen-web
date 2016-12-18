@@ -10,15 +10,12 @@ angular.module('app.main', [])
 
     $scope.bgName = ''
 
-
-
     $scope.host =
       cid : 'cid'
-      hid: 'hid'
+      hid : 'hid'
 
     ws.$on '$message', (msg) ->
       CID = $rootScope.CID
-
       _data = msg.data
 
       if msg.event == 'host'
@@ -27,6 +24,11 @@ angular.module('app.main', [])
           hid  : '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
 
         wsSend.msg('loginHost', args)
+
+      else if msg.event == 'login' #主机登录成功
+        $rootScope.UID = _data['uid']
+
+
 
       else if msg.event == 'loginHost' #主机登录成功
 
@@ -48,8 +50,10 @@ angular.module('app.main', [])
           $rootScope.$emit('lcd-close')
 
         else if _action == 'lcdOpen'
-
           $rootScope.$emit('lcd-open')
+
+        else if _action == 'lcdRest'
+          location.reload()
 
         else if _action == 'setBg'
 
@@ -80,13 +84,28 @@ angular.module('app.main', [])
       }
     ]
 
-    nowEQ   = 1
+    $scope.panel = []
+
+    nowEQ   = 0
+
+
+    $scope.likePost = (id) ->
+      console.log(id)
+      args =
+        new_id: id
+        action: 'likePost'
+
+
+      wsSend.msg('clientMsg', args)
 
 
     $scope.$on 'new-panel', (event, msg) ->
       #console.log msg.data
 
+      if $scope.panel.length == 0 then first = true
+
       for db, index in msg.data
+        if db.content.picUrl == 'undefined' then db.content.picUrl = false
 
         $scope.$apply ->
           db.open  = false
@@ -96,18 +115,25 @@ angular.module('app.main', [])
 
         nowEQ = nowEQ + 1
 
+      console.log($scope.panel)
 
-      panelLoad()
+      panelLoad(first)
 
+
+    $rootScope.$on 'panel-start', (event, msg) ->
+      if !focesAnimate then startFocus()
+
+    $rootScope.$on 'panel-stop', (event, msg) ->
+      stopFocus();
 
     #读取panel动画
-    panelLoad = ->
+    panelLoad = (first) ->
 
       i = 0
       isNext = false
       for db, index in $scope.panel
 
-        if db.focus then isNext = true
+        if db.focus || first then isNext = true
 
         if isNext
           $scope.$apply ->
@@ -117,9 +143,7 @@ angular.module('app.main', [])
 
           i = i + 0.1
 
-
-
-      #返回当前数量
+      #发送当前数量
       args =
         val: $scope.panel.length
         action: 'panel-num'
@@ -130,23 +154,25 @@ angular.module('app.main', [])
         if !focesAnimate then startFocus()
 
 
-
     focosEq = 0
+
+    focusCtrl = ''
+    stopFocus = ->
+      focesAnimate = false
+      $interval.cancel(focusCtrl);
 
     startFocus = ->
       focesAnimate = true
 
       fn = ->
-        console.log $scope.panel.length
-        console.log focosEq + '-' + nowEQ
-
+        #console.log $scope.panel.length
+        #console.log focosEq + '-' + nowEQ
 
         if $scope.panel.length == 4
           $interval.cancel(focusCtrl);
           focesAnimate = false
 
           return
-
 
         if focosEq > 0 #清除上一个焦点
           $scope.panel[focosEq - 1]['focus'] = 0
@@ -174,17 +200,14 @@ angular.module('app.main', [])
           wsSend.msg('hostMsg', args)
 
 
-
-
-      focusCtrl = $interval(fn, 1500)
-
+      focusCtrl = $interval(fn, 7000)
 ])
 
 
 #背景动画控制器
 .controller('backdropCtrl', [
-  '$scope', '$interval', '$window', '$rootScope', '$timeout'
-  ($scope, $interval, $window, $rootScope, $timeout) ->
+  '$scope', '$interval', '$window', '$rootScope', '$timeout', 'wsSend'
+  ($scope, $interval, $window, $rootScope, $timeout, wsSend) ->
 
     $scope.backdrop =
       open: false
@@ -213,10 +236,25 @@ angular.module('app.main', [])
 
     ifvisible.setIdleDuration(500)
     ifvisible.on 'idle', () ->
+      $rootScope.$emit('panel-stop')
       $rootScope.$emit('lcd-close')
 
+      args =
+        action: 'host-sleep'
+
+      wsSend.msg('hostMsg', args)
+
+
+
     ifvisible.on 'wakeup', () ->
+      $rootScope.$emit('panel-start')
       $rootScope.$emit('lcd-open')
+
+      args =
+        action: 'host-wakeup'
+
+      wsSend.msg('hostMsg', args)
+
 ])
 
 
@@ -226,6 +264,8 @@ angular.module('app.main', [])
 
     CID = uuid4
     HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
+    UID = ''
+    $rootScope.UID = UID
     $rootScope.CID = CID
     $rootScope.HID = HID
 

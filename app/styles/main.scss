@@ -36,21 +36,22 @@ html {
     border-color: $color-main;
   }
   50% {
-    border-color: rgba(255, 255, 255, .6);
+    border-color: rgba(255, 255, 255, .3);
   }
   100% {
     border-color: $color-main;
   }
 }
 
-body{
-
-   overflow:scroll;overflow-y:hidden
+body {
+  overflow: scroll;
+  overflow-y: hidden
 }
+
 .panels {
   padding: 15px 0;
-  overflow:scroll;overflow-y:hidden
-
+  overflow: scroll;
+  overflow-y: hidden
 }
 
 .panel-xk {
@@ -60,34 +61,104 @@ body{
   border: none;
   padding: 0px;
   overflow: hidden;
-  max-height: 200px;
-  transition: max-height 1s .3s;
+  height: 200px;
+  transition: height 3s .3s, opacity 1s;
+  border-radius: 0px;
   .box {
-    border: 2px solid rgba(255, 255, 255, .3);
+    border: 2px solid rgba(255, 255, 255, 0);
     transition: border-color 1s;
     margin-bottom: 10px;
+    margin-top: 10px;
     height: 100%;
-    text-align: center;
-    vertical-align: middle;
-    padding: 30px;
+    text-align: left;
 
-    img{
-      width: 300px;
+    // vertical-align: middle;
+    overflow: hidden;
+    // opacity: .3;
+    // transition: opacity .3s;
+    position: relative;
+    padding-right: 200px;
+
+    .img-box {
+      // max-height: 0px;
+      margin: 10px;
+
+      border: 1px solid $color-main;
+      padding: 30px;
+      transition: 3s;
+      overflow: hidden;
+      position: relative;
+      height: 300px;
+      width: 500px;
+      float: left;
+      background-position: center;
+      background-size: 100% auto;
+      img {
+        width: 100%;
+
+      }
     }
-    // display: table-cell;
+    .btn-group {
+      position: absolute;
+      right: 0px;
+      bottom: 0px;
+    }
+    span {
+      position: absolute;
+      &.s_description {
+        font-size: 20px;
+        background: $color-main;
+        padding: 10px;
+        right: 0px;
+        top: 0px;
+        color: rgba(255, 255, 255, .8);
+      }
+      &.s_time {
+        bottom: 0px;
+        left: 0px;
+        // width: 100%;
+        // line-height: 1.5;
+        background: rgba(0, 0, 0, .8);
+        padding: 10px;
+        // padding: 30px;
+        color: rgba(255, 255, 255, .8);
+        font-size: 18px;
+        transition: 1s 1s;
+        opacity: 0;
+      }
+    }
+    p {
+      font-size: 30px;
+      padding-bottom: 20px;
+      line-height: 1.6;
+      transition: 2s;
+    }
     width: 100%;
-    h1{
+    h1 {
+      display: inline-block;
+      margin-top: 30px;
       font-size: 120px;
     }
   }
   &.focus {
-    max-height: 3000px;
+    height: 500px;
     .box {
+      p {
+        font-size: 40px;
+      }
+
+      span {
+        &.s_time {
+          opacity: 1;
+        }
+      }
+      opacity: 1;
       animation: border_blink 1.75s cubic-bezier(.9, .15, .1, .85) infinite;
     }
   }
   &.out {
-    max-height: 0px;
+    height: 0px;
+    opacity: 0;
     .box {}
   }
 }

@@ -17,17 +17,13 @@ angular.module('app.admin', [])
       ws.$emit('hostMsg', args)
 
 
-    $scope.lcdClose = ->
-      args =
-        action: 'lcdClose'
 
+
+    $scope.action = (data) ->
+      args =
+        action:　data
       wsSend.msg('hostMsg', args)
 
-    $scope.lcdOpen = ->
-      args =
-        action: 'lcdOpen'
-
-      wsSend.msg('hostMsg', args)
 
 
     $scope.login = ->

@@ -13,17 +13,10 @@
         };
         return ws.$emit('hostMsg', args);
       };
-      $scope.lcdClose = function() {
+      $scope.action = function(data) {
         var args;
         args = {
-          action: 'lcdClose'
-        };
-        return wsSend.msg('hostMsg', args);
-      };
-      $scope.lcdOpen = function() {
-        var args;
-        args = {
-          action: 'lcdOpen'
+          action: data
         };
         return wsSend.msg('hostMsg', args);
       };

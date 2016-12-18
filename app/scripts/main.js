@@ -17,6 +17,8 @@
             hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
           };
           return wsSend.msg('loginHost', args);
+        } else if (msg.event === 'login') {
+          return $rootScope.UID = _data['uid'];
         } else if (msg.event === 'loginHost') {
           $scope.$apply(function() {
             return $scope.host = msg.data;
@@ -31,6 +33,8 @@
             return $rootScope.$emit('lcd-close');
           } else if (_action === 'lcdOpen') {
             return $rootScope.$emit('lcd-open');
+          } else if (_action === 'lcdRest') {
+            return location.reload();
           } else if (_action === 'setBg') {
             return $scope.$apply(function() {
               return $scope.bgName = msg.data.val;
@@ -43,7 +47,7 @@
     }
   ]).controller('panelsCtrl', [
     '$scope', '$interval', '$window', '$rootScope', '$timeout', 'wsSend', function($scope, $interval, $window, $rootScope, $timeout, wsSend) {
-      var EQ, focesAnimate, focosEq, nowEQ, panelLoad, startFocus;
+      var EQ, focesAnimate, focosEq, focusCtrl, nowEQ, panelLoad, startFocus, stopFocus;
       EQ = 0;
       focesAnimate = false;
       $scope.panel = [
@@ -55,12 +59,28 @@
           type: 0
         }
       ];
-      nowEQ = 1;
+      $scope.panel = [];
+      nowEQ = 0;
+      $scope.likePost = function(id) {
+        var args;
+        console.log(id);
+        args = {
+          new_id: id,
+          action: 'likePost'
+        };
+        return wsSend.msg('clientMsg', args);
+      };
       $scope.$on('new-panel', function(event, msg) {
-        var db, index, j, len, ref;
+        var db, first, index, j, len, ref;
+        if ($scope.panel.length === 0) {
+          first = true;
+        }
         ref = msg.data;
         for (index = j = 0, len = ref.length; j < len; index = ++j) {
           db = ref[index];
+          if (db.content.picUrl === 'undefined') {
+            db.content.picUrl = false;
+          }
           $scope.$apply(function() {
             db.open = false;
             db.focus = 0;
@@ -69,16 +89,25 @@
           });
           nowEQ = nowEQ + 1;
         }
-        return panelLoad();
+        console.log($scope.panel);
+        return panelLoad(first);
       });
-      panelLoad = function() {
+      $rootScope.$on('panel-start', function(event, msg) {
+        if (!focesAnimate) {
+          return startFocus();
+        }
+      });
+      $rootScope.$on('panel-stop', function(event, msg) {
+        return stopFocus();
+      });
+      panelLoad = function(first) {
         var args, db, i, index, isNext, j, len, ref;
         i = 0;
         isNext = false;
         ref = $scope.panel;
         for (index = j = 0, len = ref.length; j < len; index = ++j) {
           db = ref[index];
-          if (db.focus) {
+          if (db.focus || first) {
             isNext = true;
           }
           if (isNext) {
@@ -101,13 +130,16 @@
         }
       };
       focosEq = 0;
+      focusCtrl = '';
+      stopFocus = function() {
+        focesAnimate = false;
+        return $interval.cancel(focusCtrl);
+      };
       return startFocus = function() {
-        var fn, focusCtrl;
+        var fn;
         focesAnimate = true;
         fn = function() {
           var args;
-          console.log($scope.panel.length);
-          console.log(focosEq + '-' + nowEQ);
           if ($scope.panel.length === 4) {
             $interval.cancel(focusCtrl);
             focesAnimate = false;
@@ -136,11 +168,11 @@
             return wsSend.msg('hostMsg', args);
           }
         };
-        return focusCtrl = $interval(fn, 1500);
+        return focusCtrl = $interval(fn, 7000);
       };
     }
   ]).controller('backdropCtrl', [
-    '$scope', '$interval', '$window', '$rootScope', '$timeout', function($scope, $interval, $window, $rootScope, $timeout) {
+    '$scope', '$interval', '$window', '$rootScope', '$timeout', 'wsSend', function($scope, $interval, $window, $rootScope, $timeout, wsSend) {
       $scope.backdrop = {
         open: false,
         start: false
@@ -167,17 +199,31 @@
       });
       ifvisible.setIdleDuration(500);
       ifvisible.on('idle', function() {
-        return $rootScope.$emit('lcd-close');
+        var args;
+        $rootScope.$emit('panel-stop');
+        $rootScope.$emit('lcd-close');
+        args = {
+          action: 'host-sleep'
+        };
+        return wsSend.msg('hostMsg', args);
       });
       return ifvisible.on('wakeup', function() {
-        return $rootScope.$emit('lcd-open');
+        var args;
+        $rootScope.$emit('panel-start');
+        $rootScope.$emit('lcd-open');
+        args = {
+          action: 'host-wakeup'
+        };
+        return wsSend.msg('hostMsg', args);
       });
     }
   ]).controller('appCtrl', [
     '$scope', '$interval', '$window', 'ws', '$timeout', 'uuid4', '$rootScope', 'wsSend', function($scope, $interval, $window, ws, $timeout, uuid4, $rootScope, wsSend) {
-      var CID, HID, fn;
+      var CID, HID, UID, fn;
       CID = uuid4;
       HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01';
+      UID = '';
+      $rootScope.UID = UID;
       $rootScope.CID = CID;
       $rootScope.HID = HID;
       fn = function() {
