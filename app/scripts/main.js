@@ -24,9 +24,13 @@
             return $scope.host = msg.data;
           });
           args = {
-            action: 'get-panel'
+            action: 'getPanel'
           };
-          return wsSend.msg('hostMsg', args);
+          wsSend.msg('clientMsg', args);
+          args = {
+            action: 'getWeather'
+          };
+          return wsSend.msg('clientMsg', args);
         } else if (msg.event === 'hostMsg') {
           _action = msg.data.action;
           if (_action === 'lcdClose') {
@@ -34,12 +38,15 @@
           } else if (_action === 'lcdOpen') {
             return $rootScope.$emit('lcd-open');
           } else if (_action === 'lcdRest') {
-            return location.reload();
+            return $rootScope.$emit('panel-stop');
           } else if (_action === 'setBg') {
             return $scope.$apply(function() {
               return $scope.bgName = msg.data.val;
             });
-          } else if (_action === 'panel') {
+          }
+        } else if (msg.event === 'clientMsg') {
+          _action = msg.data.action;
+          if (_action === 'getPanel') {
             return $scope.$broadcast('new-panel', _data);
           }
         }
@@ -98,6 +105,7 @@
         }
       });
       $rootScope.$on('panel-stop', function(event, msg) {
+        console.log('stop');
         return stopFocus();
       });
       panelLoad = function(first) {
@@ -163,9 +171,9 @@
           focosEq = focosEq + 1;
           if ($scope.panel.length < 7) {
             args = {
-              action: 'get-panel'
+              action: 'getPanel'
             };
-            return wsSend.msg('hostMsg', args);
+            return wsSend.msg('clientMsg', args);
           }
         };
         return focusCtrl = $interval(fn, 7000);
@@ -197,7 +205,7 @@
         };
         return $timeout(fn, 500);
       });
-      ifvisible.setIdleDuration(500);
+      ifvisible.setIdleDuration(100);
       ifvisible.on('idle', function() {
         var args;
         $rootScope.$emit('panel-stop');
@@ -263,7 +271,7 @@
         msg: function(event, args) {
           args.cid = $rootScope.CID;
           args.aid = $rootScope.AID;
-          if (event === 'hostMsg') {
+          if ($rootScope.HID) {
             args.hid = $rootScope.HID;
           }
           console.log('> ' + event + ' - ' + JSON.stringify(args));

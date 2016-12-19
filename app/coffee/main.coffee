@@ -37,9 +37,15 @@ angular.module('app.main', [])
 
 
         args =
-          action: 'get-panel'
+          action: 'getPanel'
 
-        wsSend.msg('hostMsg', args)
+        wsSend.msg('clientMsg', args)
+
+        args =
+          action: 'getWeather'
+
+        wsSend.msg('clientMsg', args)
+
 
 
 
@@ -53,7 +59,8 @@ angular.module('app.main', [])
           $rootScope.$emit('lcd-open')
 
         else if _action == 'lcdRest'
-          location.reload()
+          $rootScope.$emit('panel-stop')
+          #location.reload()
 
         else if _action == 'setBg'
 
@@ -61,7 +68,11 @@ angular.module('app.main', [])
 
             $scope.bgName = msg.data.val
 
-        else if _action == 'panel'
+
+      else if msg.event == 'clientMsg'
+
+        _action = msg.data.action
+        if _action == 'getPanel'
 
           $scope.$broadcast('new-panel', _data)
 
@@ -124,6 +135,7 @@ angular.module('app.main', [])
       if !focesAnimate then startFocus()
 
     $rootScope.$on 'panel-stop', (event, msg) ->
+      console.log 'stop'
       stopFocus();
 
     #读取panel动画
@@ -195,9 +207,9 @@ angular.module('app.main', [])
 
         if $scope.panel.length < 7
           args =
-            action: 'get-panel'
+            action: 'getPanel'
 
-          wsSend.msg('hostMsg', args)
+          wsSend.msg('clientMsg', args)
 
 
       focusCtrl = $interval(fn, 7000)
@@ -234,7 +246,7 @@ angular.module('app.main', [])
       $timeout(fn, 500)
 
 
-    ifvisible.setIdleDuration(500)
+    ifvisible.setIdleDuration(100)
     ifvisible.on 'idle', () ->
       $rootScope.$emit('panel-stop')
       $rootScope.$emit('lcd-close')
@@ -322,9 +334,8 @@ angular.module('app.main', [])
         args.cid = $rootScope.CID
         args.aid = $rootScope.AID
 
-        if event == 'hostMsg'
-          args.hid = $rootScope.HID
 
+        if $rootScope.HID then args.hid = $rootScope.HID
 
 
 
