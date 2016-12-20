@@ -1,28 +1,101 @@
 (function() {
   'use strict';
   angular.module('app.main', []).controller('homeCtrl', [
-    '$scope', '$interval', '$window', 'ws', '$rootScope', 'wsSend', function($scope, $interval, $window, ws, $rootScope, wsSend) {
-      new WOW().init();
+    '$scope', '$interval', '$window', 'ws', '$rootScope', 'wsSend', '$modal', '$timeout', function($scope, $interval, $window, ws, $rootScope, wsSend, $modal, $timeout) {
+      var editHostModal, selHostModal;
       $scope.bgName = '';
-      $scope.host = {
-        cid: 'cid',
-        hid: 'hid'
+      $scope.host = {};
+      $scope.slider = {
+        host_wakedelay: {
+          floor: 0,
+          step: 0.1,
+          ceil: 5,
+          minLimit: 0,
+          maxLimit: 5,
+          precision: 1,
+          showTicks: 1,
+          translate: function(value) {
+            return value + 's';
+          }
+        },
+        host_panel_eq: {
+          floor: 0,
+          step: 1,
+          ceil: 30,
+          minLimit: 0,
+          maxLimit: 30,
+          precision: 1,
+          showTicks: 5
+        },
+        host_sleep: {
+          floor: 0,
+          step: 1,
+          ceil: 600,
+          minLimit: 0,
+          maxLimit: 600,
+          precision: 1,
+          showTicks: 60
+        }
+      };
+      editHostModal = $modal({
+        scope: $scope,
+        template: 'views/modal/setting.tpl.html',
+        show: false
+      });
+      selHostModal = $modal({
+        scope: $scope,
+        template: 'views/modal/sel_host.tpl.html',
+        show: false,
+        backdrop: 'static'
+      });
+      selHostModal.$promise.then(selHostModal.show);
+      $scope.save = function() {
+        var args;
+        args = {
+          data: $scope.host,
+          action: 'editHost'
+        };
+        wsSend.msg('hostMsg', args);
+        return editHostModal.$promise.then(editHostModal.hide);
+      };
+      $scope.editHostModal = function() {
+        var fn;
+        editHostModal.$promise.then(editHostModal.show);
+        fn = function() {
+          return $scope.$broadcast('rzSliderForceRender');
+        };
+        return $timeout(fn);
+      };
+      $scope.selHostModal = function() {
+        return selHostModal.$promise.then(selHostModal.show);
+      };
+      $scope.openHost = function(host_id) {
+        var args;
+        console.log(host_id);
+        args = {
+          hid: host_id
+        };
+        wsSend.msg('loginHost', args);
+        return selHostModal.$promise.then(selHostModal.hide);
       };
       return ws.$on('$message', function(msg) {
         var CID, _action, _data, args;
         CID = $rootScope.CID;
         _data = msg.data;
         if (msg.event === 'host') {
-          args = {
-            hid: '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
-          };
-          return wsSend.msg('loginHost', args);
+          return $scope.$apply(function() {
+            return $scope.hosts = msg.data.data;
+          });
         } else if (msg.event === 'login') {
           return $rootScope.UID = _data['uid'];
         } else if (msg.event === 'loginHost') {
+          $rootScope.HID = _data.host_id;
           $scope.$apply(function() {
-            return $scope.host = msg.data;
+            $scope.host = msg.data.data;
+            return $rootScope.host = $scope.host;
           });
+          console.log($rootScope.host);
+          $rootScope.$emit('init-ifvisible');
           args = {
             action: 'getPanel'
           };
@@ -169,7 +242,7 @@
           $scope.panel[focosEq]['focus'] = 1;
           $scope.panel[focosEq]['delay'] = 0;
           focosEq = focosEq + 1;
-          if ($scope.panel.length < 7) {
+          if ($scope.panel.length < $rootScope.host.host_panel_eq + 5) {
             args = {
               action: 'getPanel'
             };
@@ -205,35 +278,38 @@
         };
         return $timeout(fn, 500);
       });
-      ifvisible.setIdleDuration(100);
-      ifvisible.on('idle', function() {
-        var args;
-        $rootScope.$emit('panel-stop');
-        $rootScope.$emit('lcd-close');
-        args = {
-          action: 'host-sleep'
-        };
-        return wsSend.msg('hostMsg', args);
-      });
-      return ifvisible.on('wakeup', function() {
-        var args;
-        $rootScope.$emit('panel-start');
-        $rootScope.$emit('lcd-open');
-        args = {
-          action: 'host-wakeup'
-        };
-        return wsSend.msg('hostMsg', args);
+      return $rootScope.$on('init-ifvisible', function() {
+        ifvisible.setIdleDuration($rootScope.host.host_sleep);
+        ifvisible.on('idle', function() {
+          var args;
+          if ($rootScope.host.host_sleep_mode === 1) {
+            $rootScope.$emit('panel-stop');
+            $rootScope.$emit('lcd-close');
+            args = {
+              action: 'host-sleep'
+            };
+            return wsSend.msg('hostMsg', args);
+          }
+        });
+        return ifvisible.on('wakeup', function() {
+          var args;
+          $rootScope.$emit('panel-start');
+          $rootScope.$emit('lcd-open');
+          args = {
+            action: 'host-wakeup'
+          };
+          return wsSend.msg('hostMsg', args);
+        });
       });
     }
   ]).controller('appCtrl', [
     '$scope', '$interval', '$window', 'ws', '$timeout', 'uuid4', '$rootScope', 'wsSend', function($scope, $interval, $window, ws, $timeout, uuid4, $rootScope, wsSend) {
-      var CID, HID, UID, fn;
+      var CID, UID, fn;
       CID = uuid4;
-      HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01';
       UID = '';
-      $rootScope.UID = UID;
+      $rootScope.UID = '';
       $rootScope.CID = CID;
-      $rootScope.HID = HID;
+      $rootScope.HID = '';
       fn = function() {
         return $scope.$emit('lcd-close');
       };

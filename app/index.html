@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="viewport" content="width=320,user-scalable=no" />
   <title>xank webtool</title>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- Place favicon.ico in the root directory -->
@@ -27,12 +28,20 @@
   <script src="../bower_components/ifvisible.js/src/ifvisible.js"></script>
   <script src="../bower_components/letteringjs/jquery.lettering.js"></script>
   <script src="../bower_components/lightgallery/lib/jquery.mousewheel.min.js"></script>
-  <script src="../bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+
+
   <script src="../bower_components/angular/angular.min.js"></script>
   <script src="../bower_components/angular-route/angular-route.js"></script>
   <script src="../bower_components/angular-animate/angular-animate.js"></script>
   <script src="../bower_components/ng-websocket/ng-websocket.js"></script>
   <script src="../bower_components/angular-uuid/uuid.js"></script>
+  <script src="../bower_components/angular-strap/dist/angular-strap.min.js"></script>
+
+  <script src="../bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+  <script src="../bower_components/angularjs-slider/dist/rzslider.min.js"></script>
+
+
+
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:js scripts/plugins.js -->
@@ -49,51 +58,21 @@
 
 <body data-ng-app="app" ng-controller="appCtrl">
   <div class="container" ng-controller="homeCtrl">
-    <!-- <p>{{host}}</p> -->
-    <!--     <div class="panel panel-xk panel-wea">
-      <h1>气温</h1>
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-xs-6 col-t_box">
-            <h1>气温</h1>
-            <span class="t_num">28</span>
-          </div>
-          <div class="col-xs-6 col-t_box">
-            <h1>湿度</h1>
-            <span class="t_num">28</span>
-          </div>
-        </div>
-      </div>
-    </div> -->
-    <!--     <div class="panel panel-xk istop  wow fadeInUp">
-      <div class="box">
-        置顶
-      </div>
+
+    <div class="bottom-action">
+<button type="button" class="btn btn-lg btn-danger" ng-click="editHostModal()">设置</button>
+
+<button type="button" class="btn btn-lg btn-danger" ng-click="selHostModal()">切换</button>
 
     </div>
 
-    <div class="panel panel-xk focus  wow fadeInUp">
-      <div class="box">
-        置顶
-      </div>
-    </div>
-    <div class="panel panel-xk  wow fadeInUp">
-      <div class="box">
-        置顶
-      </div>
-    </div>
- -->
-    <!-- <div class="btn btn-default">获取推送</div> -->
     <div class="panels" ng-controller="panelsCtrl">
       <div class="panel panel-xk animated fadeInUp" style="animation-delay:{{db.delay}}s;" ng-class="{1: 'focus', 2: 'out'}[db.focus]" ng-repeat="db in panel" ng-if="db.open">
         <div class="box" ng-if="db.type == 0">
           <h1>{{db.text}}</h1>
         </div>
         <div class="box" ng-if="db.type == 1">
-
             <!-- <p>{{db.content.title}}</p> -->
-
-
             <p class="p_title">{{db.content.title}}</p>
             <span class="s_description">{{db.content.description}}</span>
             <div class="img-box" style="background-image:url({{db.content.picUrl}})" ng-if="db.content.picUrl">
@@ -122,6 +101,9 @@
     <div class="xk-backdrop" ng-class="{true:'in', false: 'as'}[backdrop.start]" ng-if="backdrop.open">
     </div>
   </div>
+
+
+
   <script type="text/javascript">
   </script>
 </body>

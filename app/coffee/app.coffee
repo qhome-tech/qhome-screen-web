@@ -7,6 +7,8 @@ angular.module('app', [
   'app.admin'
   "uuid"
   'app.bg'
+  'mgcrea.ngStrap'
+  'rzModule'
 ])
 
 

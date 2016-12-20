@@ -4,15 +4,99 @@ angular.module('app.main', [])
 
 
 .controller('homeCtrl', [
-  '$scope', '$interval', '$window', 'ws', '$rootScope', 'wsSend'
-  ($scope, $interval, $window, ws, $rootScope, wsSend) ->
-    new WOW().init();
+  '$scope', '$interval', '$window', 'ws', '$rootScope', 'wsSend', '$modal', '$timeout'
+  ($scope, $interval, $window, ws, $rootScope, wsSend, $modal, $timeout) ->
+
 
     $scope.bgName = ''
 
-    $scope.host =
-      cid : 'cid'
-      hid : 'hid'
+    $scope.host = {}
+
+
+    #myModal = $modal({title: 'My Title', content: 'My Content', show: true})
+    $scope.slider = {
+      host_wakedelay: {
+        floor: 0
+        step: 0.1
+        ceil: 5
+        minLimit: 0
+        maxLimit: 5
+        precision: 1
+        showTicks: 1
+
+        translate: (value) ->
+          value + 's'
+
+      }
+
+      host_panel_eq: {
+        floor: 0
+        step: 1
+        ceil: 30
+        minLimit: 0
+        maxLimit: 30
+        precision: 1
+        showTicks: 5
+
+      }
+
+      host_sleep: {
+        floor: 0
+        step: 1
+        ceil: 600
+        minLimit: 0
+        maxLimit: 600
+        precision: 1
+        showTicks: 60
+
+      }
+
+
+    }
+
+
+
+
+    editHostModal = $modal({
+      scope: $scope
+      template: 'views/modal/setting.tpl.html'
+      show: false
+    })
+
+    selHostModal = $modal({
+      scope: $scope
+      template: 'views/modal/sel_host.tpl.html'
+      show: false
+      backdrop: 'static'
+    })
+
+    selHostModal.$promise.then(selHostModal.show)
+
+
+    $scope.save = () ->
+      args =
+        data: $scope.host
+        action: 'editHost'
+      wsSend.msg('hostMsg', args)
+      editHostModal.$promise.then(editHostModal.hide)
+
+    $scope.editHostModal = () ->
+      editHostModal.$promise.then(editHostModal.show)
+      fn = ->
+        $scope.$broadcast('rzSliderForceRender')
+      $timeout(fn)
+
+    $scope.selHostModal = () ->
+      selHostModal.$promise.then(selHostModal.show)
+
+    $scope.openHost = (host_id) ->
+      console.log host_id
+      args =
+        hid  : host_id
+
+      wsSend.msg('loginHost', args)
+      selHostModal.$promise.then(selHostModal.hide)
+
 
     ws.$on '$message', (msg) ->
       CID = $rootScope.CID
@@ -20,10 +104,15 @@ angular.module('app.main', [])
 
       if msg.event == 'host'
 
-        args =
-          hid  : '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
+        #args =
+        #  hid  : '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
 
-        wsSend.msg('loginHost', args)
+        #wsSend.msg('loginHost', args)
+
+        $scope.$apply ->
+          $scope.hosts = msg.data.data
+
+
 
       else if msg.event == 'login' #主机登录成功
         $rootScope.UID = _data['uid']
@@ -32,8 +121,17 @@ angular.module('app.main', [])
 
       else if msg.event == 'loginHost' #主机登录成功
 
+        $rootScope.HID = _data.host_id
+
         $scope.$apply ->
-          $scope.host = msg.data
+          $scope.host = msg.data.data
+          $rootScope.host = $scope.host
+
+
+        console.log $rootScope.host
+
+        $rootScope.$emit('init-ifvisible')
+
 
 
         args =
@@ -138,6 +236,10 @@ angular.module('app.main', [])
       console.log 'stop'
       stopFocus();
 
+
+
+
+
     #读取panel动画
     panelLoad = (first) ->
 
@@ -205,7 +307,7 @@ angular.module('app.main', [])
 
 
 
-        if $scope.panel.length < 7
+        if $scope.panel.length < $rootScope.host.host_panel_eq + 5
           args =
             action: 'getPanel'
 
@@ -246,26 +348,39 @@ angular.module('app.main', [])
       $timeout(fn, 500)
 
 
-    ifvisible.setIdleDuration(100)
-    ifvisible.on 'idle', () ->
-      $rootScope.$emit('panel-stop')
-      $rootScope.$emit('lcd-close')
 
-      args =
-        action: 'host-sleep'
-
-      wsSend.msg('hostMsg', args)
+    $rootScope.$on 'init-ifvisible', () ->
 
 
+      ifvisible.setIdleDuration($rootScope.host.host_sleep)
 
-    ifvisible.on 'wakeup', () ->
-      $rootScope.$emit('panel-start')
-      $rootScope.$emit('lcd-open')
+      ifvisible.on 'idle', () ->
 
-      args =
-        action: 'host-wakeup'
 
-      wsSend.msg('hostMsg', args)
+        if $rootScope.host.host_sleep_mode == 1
+
+          $rootScope.$emit('panel-stop')
+          $rootScope.$emit('lcd-close')
+
+          args =
+            action: 'host-sleep'
+
+          wsSend.msg('hostMsg', args)
+
+
+
+      ifvisible.on 'wakeup', () ->
+        $rootScope.$emit('panel-start')
+        $rootScope.$emit('lcd-open')
+
+        args =
+          action: 'host-wakeup'
+
+        wsSend.msg('hostMsg', args)
+
+
+
+
 
 ])
 
@@ -275,11 +390,12 @@ angular.module('app.main', [])
   ($scope, $interval, $window, ws, $timeout, uuid4, $rootScope, wsSend) ->
 
     CID = uuid4
-    HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
+    #HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
     UID = ''
-    $rootScope.UID = UID
+    $rootScope.UID = ''
     $rootScope.CID = CID
-    $rootScope.HID = HID
+    $rootScope.HID = ''
+
 
     fn = ->
       $scope.$emit('lcd-close')

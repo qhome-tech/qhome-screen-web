@@ -1,0 +1,25 @@
+<div class="modal top" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="$hide()">×</button>
+        <h4 class="modal-title">选择主机</h4></div>
+
+
+      <div class="modal-body">
+
+
+        <div class="list-group">
+          <a ng-click="openHost(db.host_id)" class="list-group-item" ng-repeat="db in hosts">
+            <h3>{{db.host_name}}</h3>
+            <p>{{db.host_address}}</p>
+            <p>{{db.host_id}}</p>
+          </a>
+        </div>
+
+
+      </div>
+
+    </div>
+  </div>
+</div>

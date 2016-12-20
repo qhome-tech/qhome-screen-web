@@ -13,7 +13,9 @@
     "angular-uuid": "^0.1.0",
     "ifvisible.js": "^1.0.6",
     "wow": "^1.1.2",
-    "textillate": "^0.4.0"
+    "textillate": "^0.4.0",
+    "angular-strap": "^2.3.10",
+    "angularjs-slider": "^5.9.0"
   },
   "overrides": {
     "bootstrap-sass": {

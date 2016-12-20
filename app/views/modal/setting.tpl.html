@@ -1,0 +1,46 @@
+<div class="modal top" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="$hide()">×</button>
+        <h4 class="modal-title">主机设置</h4></div>
+      <div class="modal-body">
+        <form role="form" name="form_host">
+          <div class="form-group">
+            <label>主机名</label>
+            <input ng-model="host.host_name" class="form-control" placeholder="主机名">
+          </div>
+          <div class="form-group">
+            <label>主机位置</label>
+            <input ng-model="host.host_address" class="form-control" placeholder="主机位置">
+          </div>
+          <div class="form-group">
+            <label>消息队列数量</label>
+            <rzslider rz-slider-options="slider.host_panel_eq" rz-slider-model="host.host_panel_eq"></rzslider>
+          </div>
+          <div class="form-group">
+            <label>睡眠模式</label>
+            <div class="btn-group pull-right" ng-model="host.host_sleep_mode" bs-radio-group>
+              <label class="btn btn-default">
+                <input type="radio" class="btn btn-default" value="0">关闭睡眠</label>
+              <label class="btn btn-default">
+                <input type="radio" class="btn btn-default" value="1">定时睡眠</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">睡眠时间</label>
+            <rzslider rz-slider-options="slider.host_sleep" rz-slider-model="host.host_sleep"></rzslider>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">响应延迟</label>
+            <rzslider rz-slider-options="slider.host_wakedelay" rz-slider-model="host.host_wakedelay"></rzslider>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="$hide()">关闭</button>
+        <button type="button" class="btn btn-primary" ng-click="save()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>

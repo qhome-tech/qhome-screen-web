@@ -6,10 +6,93 @@ $color-main: #226086;
 @import "plus/animate.scss";
 @import "plus/bg_main.scss";
 @import "plus/bg_snow.scss";
+@import "plus/rzslider.scss";
 @import "plus/bg_floating.scss";
 @import "lightgallery/lightgallery.scss";
 body {
   background: #000;
+}
+
+.modal-backdrop.am-fade {
+  opacity: .5;
+  transition: opacity .15s linear;
+  &.ng-enter {
+    opacity: 0;
+    &.ng-enter-active {
+      opacity: .5;
+    }
+  }
+  &.ng-leave {
+    opacity: .5;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+
+
+
+
+@keyframes fadeAndScaleIn {
+    from {
+        opacity: 0;
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7)
+    }
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fadeAndScaleOut {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0;
+        -webkit-transform: scale(0.7);
+        transform: scale(0.7)
+    }
+}
+.am-fade-and-slide-top {
+    animation-duration: .3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: backwards
+}
+
+.am-fade-and-slide-top.am-fade-and-slide-top-add,
+.am-fade-and-slide-top.ng-hide-remove,
+.am-fade-and-slide-top.ng-move {
+    animation-name: fadeAndSlideFromTop
+}
+
+
+.am-fade-and-slide-top.am-fade-and-slide-top-remove,
+.am-fade-and-slide-top.ng-hide {
+    -webkit-animation-name: fadeAndSlideToTop;
+    animation-name: fadeAndSlideToTop
+}
+.am-fade-and-slide-top.ng-enter {
+    visibility: hidden;
+    -webkit-animation-name: fadeAndSlideFromTop;
+    animation-name: fadeAndSlideFromTop;
+    -webkit-animation-play-state: paused;
+    animation-play-state: paused
+}
+.am-fade-and-slide-top.ng-enter.ng-enter-active {
+    visibility: visible;
+    -webkit-animation-play-state: running;
+    animation-play-state: running
+}
+.am-fade-and-slide-top.ng-leave {
+    -webkit-animation-name: fadeAndSlideToTop;
+    animation-name: fadeAndSlideToTop;
+    -webkit-animation-play-state: paused;
+    animation-play-state: paused
+}
+.am-fade-and-slide-top.ng-leave.ng-leave-active {
+    -webkit-animation-play-state: running;
+    animation-play-state: running
 }
 
 .xk-backdrop {
@@ -171,3 +254,6 @@ body {
     font-size: 120px;
   }
 }
+
+
+
