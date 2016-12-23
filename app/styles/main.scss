@@ -1,5 +1,7 @@
 // $icon-font-path: '../fonts/';
 $color-main: #226086;
+
+$color-focus: #F7931E;
 @import "xankstrap/xankstrap.scss";
 @import "ele-mixin.scss";
 @import "ele-tool.scss";
@@ -9,251 +11,85 @@ $color-main: #226086;
 @import "plus/rzslider.scss";
 @import "plus/bg_floating.scss";
 @import "lightgallery/lightgallery.scss";
-body {
-  background: #000;
-}
+@import "xanke/home.scss";
+@import "xanke/panels.scss";
 
-.modal-backdrop.am-fade {
-  opacity: .5;
-  transition: opacity .15s linear;
-  &.ng-enter {
-    opacity: 0;
-    &.ng-enter-active {
-      opacity: .5;
-    }
-  }
-  &.ng-leave {
-    opacity: .5;
-    &.ng-leave-active {
-      opacity: 0;
-    }
+
+
+
+#star svg {
+  width: 100%;
+
+  #starme{
+    // fill: #F7931E;
+    fill: #FFF;
+    // fill: rgba(255, 255, 255, .9);
   }
 }
 
+.focus{
 
 
+  svg{
+    animation: tada 1.5s infinite;
 
-@keyframes fadeAndScaleIn {
-    from {
-        opacity: 0;
-        -webkit-transform: scale(0.7);
-        transform: scale(0.7)
-    }
-    to {
-        opacity: 1
-    }
+  }
 }
 
-@keyframes fadeAndScaleOut {
-    from {
-        opacity: 1
-    }
-    to {
-        opacity: 0;
-        -webkit-transform: scale(0.7);
-        transform: scale(0.7)
-    }
-}
-.am-fade-and-slide-top {
-    animation-duration: .3s;
-    animation-timing-function: ease-in-out;
-    animation-fill-mode: backwards
-}
-
-.am-fade-and-slide-top.am-fade-and-slide-top-add,
-.am-fade-and-slide-top.ng-hide-remove,
-.am-fade-and-slide-top.ng-move {
-    animation-name: fadeAndSlideFromTop
-}
-
-
-.am-fade-and-slide-top.am-fade-and-slide-top-remove,
-.am-fade-and-slide-top.ng-hide {
-    -webkit-animation-name: fadeAndSlideToTop;
-    animation-name: fadeAndSlideToTop
-}
-.am-fade-and-slide-top.ng-enter {
-    visibility: hidden;
-    -webkit-animation-name: fadeAndSlideFromTop;
-    animation-name: fadeAndSlideFromTop;
-    -webkit-animation-play-state: paused;
-    animation-play-state: paused
-}
-.am-fade-and-slide-top.ng-enter.ng-enter-active {
-    visibility: visible;
-    -webkit-animation-play-state: running;
-    animation-play-state: running
-}
-.am-fade-and-slide-top.ng-leave {
-    -webkit-animation-name: fadeAndSlideToTop;
-    animation-name: fadeAndSlideToTop;
-    -webkit-animation-play-state: paused;
-    animation-play-state: paused
-}
-.am-fade-and-slide-top.ng-leave.ng-leave-active {
-    -webkit-animation-play-state: running;
-    animation-play-state: running
-}
-
-.xk-backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1040;
-  background-color: #000;
-  transition: 1s;
+#outer_glow {
   opacity: 0;
-  &.in {
+  // animation: explodeem 1s infinite ease;
+}
+
+#inner_glow {
+  opacity: 0;
+  // animation: explodeem .5s infinite ease;
+}
+
+@keyframes tada {
+  0% {
+    transform: scale3d(1, 1, 1)
+  }
+  10%,
+  20% {
+    transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, -3deg)
+  }
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 3deg)
+  }
+  40%,
+  60%,
+  80% {
+    transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, -3deg)
+  }
+  100% {
+    transform: scale3d(1, 1, 1)
+  }
+}
+
+@keyframes explodeem {
+  0% {
+    opacity: 0;
+  }
+  50% {
     opacity: 1;
   }
-}
-
-html {
-  font-size: 11px;
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes border_blink {
   0% {
-    border-color: $color-main;
+    border-color: $color-focus;
   }
   50% {
     border-color: rgba(255, 255, 255, .3);
   }
   100% {
-    border-color: $color-main;
+    border-color: $color-focus;
   }
 }
-
-body {
-  overflow: scroll;
-  overflow-y: hidden
-}
-
-.panels {
-  padding: 15px 0;
-  overflow: scroll;
-  overflow-y: hidden
-}
-
-.panel-xk {
-  background: rgba(0, 0, 0, 0);
-  color: #FFF;
-  margin: 0px;
-  border: none;
-  padding: 0px;
-  overflow: hidden;
-  height: 200px;
-  transition: height 3s .3s, opacity 1s;
-  border-radius: 0px;
-  .box {
-    border: 2px solid rgba(255, 255, 255, 0);
-    transition: border-color 1s;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    height: 100%;
-    text-align: left;
-
-    // vertical-align: middle;
-    overflow: hidden;
-    // opacity: .3;
-    // transition: opacity .3s;
-    position: relative;
-    padding-right: 200px;
-
-    .img-box {
-      // max-height: 0px;
-      margin: 10px;
-
-      border: 1px solid $color-main;
-      padding: 30px;
-      transition: 3s;
-      overflow: hidden;
-      position: relative;
-      height: 300px;
-      width: 500px;
-      float: left;
-      background-position: center;
-      background-size: 100% auto;
-      img {
-        width: 100%;
-
-      }
-    }
-    .btn-group {
-      position: absolute;
-      right: 0px;
-      bottom: 0px;
-    }
-    span {
-      position: absolute;
-      &.s_description {
-        font-size: 20px;
-        background: $color-main;
-        padding: 10px;
-        right: 0px;
-        top: 0px;
-        color: rgba(255, 255, 255, .8);
-      }
-      &.s_time {
-        bottom: 0px;
-        left: 0px;
-        // width: 100%;
-        // line-height: 1.5;
-        background: rgba(0, 0, 0, .8);
-        padding: 10px;
-        // padding: 30px;
-        color: rgba(255, 255, 255, .8);
-        font-size: 18px;
-        transition: 1s 1s;
-        opacity: 0;
-      }
-    }
-    p {
-      font-size: 30px;
-      padding-bottom: 20px;
-      line-height: 1.6;
-      transition: 2s;
-    }
-    width: 100%;
-    h1 {
-      display: inline-block;
-      margin-top: 30px;
-      font-size: 120px;
-    }
-  }
-  &.focus {
-    height: 500px;
-    .box {
-      p {
-        font-size: 40px;
-      }
-
-      span {
-        &.s_time {
-          opacity: 1;
-        }
-      }
-      opacity: 1;
-      animation: border_blink 1.75s cubic-bezier(.9, .15, .1, .85) infinite;
-    }
-  }
-  &.out {
-    height: 0px;
-    opacity: 0;
-    .box {}
-  }
-}
-
-.panel-wea {
-  .col-t_box {
-    text-align: center;
-  }
-  span.t_num {
-    font-size: 120px;
-  }
-}
-
-
-

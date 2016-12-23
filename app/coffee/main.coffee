@@ -90,12 +90,16 @@ angular.module('app.main', [])
       selHostModal.$promise.then(selHostModal.show)
 
     $scope.openHost = (host_id) ->
-      console.log host_id
+      openHost(host_id)
+
+
+
+    openHost = (host_id) ->
       args =
         hid  : host_id
 
       wsSend.msg('loginHost', args)
-      selHostModal.$promise.then(selHostModal.hide)
+
 
 
     ws.$on '$message', (msg) ->
@@ -109,30 +113,38 @@ angular.module('app.main', [])
 
         #wsSend.msg('loginHost', args)
 
+        host = msg.data.data
+
+
         $scope.$apply ->
-          $scope.hosts = msg.data.data
+          $scope.hosts = host
 
 
 
-      else if msg.event == 'login' #主机登录成功
+      else if msg.event == 'login' #用户登录成功
         $rootScope.UID = _data['uid']
+
+        host_id = localStorage.getItem('host_id')
+        if host_id
+          openHost(host_id)
 
 
 
       else if msg.event == 'loginHost' #主机登录成功
 
-        $rootScope.HID = _data.host_id
+        host_id = _data.data.host_id
+        $rootScope.HID = host_id
+
+        localStorage.setItem('host_id', host_id)
+
+        selHostModal.$promise.then(selHostModal.hide)
 
         $scope.$apply ->
           $scope.host = msg.data.data
           $rootScope.host = $scope.host
 
 
-        console.log $rootScope.host
-
         $rootScope.$emit('init-ifvisible')
-
-
 
         args =
           action: 'getPanel'
@@ -145,7 +157,10 @@ angular.module('app.main', [])
         wsSend.msg('clientMsg', args)
 
 
+        args =
+          action: 'getLikeNews'
 
+        wsSend.msg('clientMsg', args)
 
       else if msg.event == 'hostMsg'
 
@@ -163,7 +178,6 @@ angular.module('app.main', [])
         else if _action == 'setBg'
 
           $scope.$apply ->
-
             $scope.bgName = msg.data.val
 
 
@@ -173,6 +187,41 @@ angular.module('app.main', [])
         if _action == 'getPanel'
 
           $scope.$broadcast('new-panel', _data)
+
+])
+
+.directive('btnLike', [
+  'wsSend', 'ws'
+  (wsSend, ws) ->
+
+    return {
+
+
+      restrict : 'C'
+      scope    : true
+
+
+      link: (scope, ele, attr) ->
+        console.log 'sd'
+        ele.on 'click', () ->
+          id = ele.attr('new-id')
+          ele.addClass('visited')
+
+
+          args =
+            new_id: id
+            action: 'likePost'
+
+
+          wsSend.msg('clientMsg', args)
+
+
+
+    }
+
+
+
+
 
 ])
 
@@ -198,14 +247,6 @@ angular.module('app.main', [])
     nowEQ   = 0
 
 
-    $scope.likePost = (id) ->
-      console.log(id)
-      args =
-        new_id: id
-        action: 'likePost'
-
-
-      wsSend.msg('clientMsg', args)
 
 
     $scope.$on 'new-panel', (event, msg) ->
@@ -289,9 +330,9 @@ angular.module('app.main', [])
           return
 
         if focosEq > 0 #清除上一个焦点
-          $scope.panel[focosEq - 1]['focus'] = 0
+          $scope.panel[focosEq - 1]['focus'] = 2
         if focosEq > 1
-          $scope.panel[focosEq - 2]['focus'] = 2
+          $scope.panel[focosEq - 2]['focus'] = 3
         if focosEq > 2
           $scope.panel[focosEq - 3]['open'] = false
 
@@ -390,7 +431,6 @@ angular.module('app.main', [])
   ($scope, $interval, $window, ws, $timeout, uuid4, $rootScope, wsSend) ->
 
     CID = uuid4
-    #HID = '09bbea78-bfb2-11e6-a4a6-cec0c932ce01'
     UID = ''
     $rootScope.UID = ''
     $rootScope.CID = CID
@@ -432,10 +472,8 @@ angular.module('app.main', [])
 .factory('ws', [
   '$websocket'
   ($websocket) ->
-
     ws = $websocket.$new('ws://192.168.31.101:8181');
     return ws
-
 ])
 
 
@@ -443,20 +481,13 @@ angular.module('app.main', [])
 .factory('wsSend', [
   'ws', '$rootScope'
   (ws, $rootScope) ->
-
     return {
       msg: (event, args) ->
 
         args.cid = $rootScope.CID
         args.aid = $rootScope.AID
-
-
         if $rootScope.HID then args.hid = $rootScope.HID
-
-
-
         console.log('> ' + event + ' - ' +JSON.stringify(args))
-
         ws.$emit(event,  args)
     }
 

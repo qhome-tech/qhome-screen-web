@@ -2,7 +2,7 @@
   'use strict';
   angular.module('app.main', []).controller('homeCtrl', [
     '$scope', '$interval', '$window', 'ws', '$rootScope', 'wsSend', '$modal', '$timeout', function($scope, $interval, $window, ws, $rootScope, wsSend, $modal, $timeout) {
-      var editHostModal, selHostModal;
+      var editHostModal, openHost, selHostModal;
       $scope.bgName = '';
       $scope.host = {};
       $scope.slider = {
@@ -70,31 +70,39 @@
         return selHostModal.$promise.then(selHostModal.show);
       };
       $scope.openHost = function(host_id) {
+        return openHost(host_id);
+      };
+      openHost = function(host_id) {
         var args;
-        console.log(host_id);
         args = {
           hid: host_id
         };
-        wsSend.msg('loginHost', args);
-        return selHostModal.$promise.then(selHostModal.hide);
+        return wsSend.msg('loginHost', args);
       };
       return ws.$on('$message', function(msg) {
-        var CID, _action, _data, args;
+        var CID, _action, _data, args, host, host_id;
         CID = $rootScope.CID;
         _data = msg.data;
         if (msg.event === 'host') {
+          host = msg.data.data;
           return $scope.$apply(function() {
-            return $scope.hosts = msg.data.data;
+            return $scope.hosts = host;
           });
         } else if (msg.event === 'login') {
-          return $rootScope.UID = _data['uid'];
+          $rootScope.UID = _data['uid'];
+          host_id = localStorage.getItem('host_id');
+          if (host_id) {
+            return openHost(host_id);
+          }
         } else if (msg.event === 'loginHost') {
-          $rootScope.HID = _data.host_id;
+          host_id = _data.data.host_id;
+          $rootScope.HID = host_id;
+          localStorage.setItem('host_id', host_id);
+          selHostModal.$promise.then(selHostModal.hide);
           $scope.$apply(function() {
             $scope.host = msg.data.data;
             return $rootScope.host = $scope.host;
           });
-          console.log($rootScope.host);
           $rootScope.$emit('init-ifvisible');
           args = {
             action: 'getPanel'
@@ -102,6 +110,10 @@
           wsSend.msg('clientMsg', args);
           args = {
             action: 'getWeather'
+          };
+          wsSend.msg('clientMsg', args);
+          args = {
+            action: 'getLikeNews'
           };
           return wsSend.msg('clientMsg', args);
         } else if (msg.event === 'hostMsg') {
@@ -125,6 +137,26 @@
         }
       });
     }
+  ]).directive('btnLike', [
+    'wsSend', 'ws', function(wsSend, ws) {
+      return {
+        restrict: 'C',
+        scope: true,
+        link: function(scope, ele, attr) {
+          console.log('sd');
+          return ele.on('click', function() {
+            var args, id;
+            id = ele.attr('new-id');
+            ele.addClass('visited');
+            args = {
+              new_id: id,
+              action: 'likePost'
+            };
+            return wsSend.msg('clientMsg', args);
+          });
+        }
+      };
+    }
   ]).controller('panelsCtrl', [
     '$scope', '$interval', '$window', '$rootScope', '$timeout', 'wsSend', function($scope, $interval, $window, $rootScope, $timeout, wsSend) {
       var EQ, focesAnimate, focosEq, focusCtrl, nowEQ, panelLoad, startFocus, stopFocus;
@@ -141,15 +173,6 @@
       ];
       $scope.panel = [];
       nowEQ = 0;
-      $scope.likePost = function(id) {
-        var args;
-        console.log(id);
-        args = {
-          new_id: id,
-          action: 'likePost'
-        };
-        return wsSend.msg('clientMsg', args);
-      };
       $scope.$on('new-panel', function(event, msg) {
         var db, first, index, j, len, ref;
         if ($scope.panel.length === 0) {
@@ -227,10 +250,10 @@
             return;
           }
           if (focosEq > 0) {
-            $scope.panel[focosEq - 1]['focus'] = 0;
+            $scope.panel[focosEq - 1]['focus'] = 2;
           }
           if (focosEq > 1) {
-            $scope.panel[focosEq - 2]['focus'] = 2;
+            $scope.panel[focosEq - 2]['focus'] = 3;
           }
           if (focosEq > 2) {
             $scope.panel[focosEq - 3]['open'] = false;
