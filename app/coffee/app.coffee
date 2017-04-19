@@ -1,5 +1,8 @@
 'use strict';
 angular.module('app', [
+  'ngMaterial'
+  'ngMessages'
+
   'ngRoute'
   'ngAnimate'
   'ngWebsocket'
@@ -16,6 +19,20 @@ angular.module('app', [
   '$routeProvider','$locationProvider'
   ($routeProvider, $locationProvider) ->
       #$locationProvider.html5Mode(true)
+
+
+    $routeProvider
+      #默认跳转
+      .when(
+        '/'
+        redirectTo: '/home'
+      )
+
+      .when(
+        '/home'
+        templateUrl: '../views/home.html'
+      )
+
 
 
 

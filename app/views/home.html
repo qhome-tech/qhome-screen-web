@@ -1,28 +1,36 @@
 <div class="container">
-
-  <section>
-    <a href="" class="btn">相册</a>
-    <a href="" class="btn">地图</a>
-    <a href="" class="btn">相片</a>
-  </section>
-  <div class="row">
-    <!-- 相册列表-->
-    <div ng-repeat="db in list" class=" col-md-3 col-sm-4 col-xs-6">
-      <div class="col-inner col-pic">
-
-
-        <a class="col-thumbnail" pic-id="{{db.id}}" ng-href="#/pic/{{db.id}}" ng-class="{h:'h'}[db.css]" style="background-image: url(//p.xank.cn/size_w500/{{db.path}})">
-          <img pic-id="{{db.id}}" ng-src="//p.xank.cn/size_w500/{{db.path}}" style="display:none" onload="imgok(this)">
-          <div class="caption">
-            <div class="content">
-              <h3 class="title">{{db.name}}</h3>
-            </div>
-
-
-            <!-- <p>{{db.count}}</p> -->
-          </div>
-        </a>
+  <!-- <a href="" class="btn btn-default">登录</a> -->
+  <!-- <a href="" class="btn btn-default">新闻</a> -->
+  <section class="section-login">
+    <h1>登录</h1>
+    <form role="form">
+      <div class="form-group">
+        <label for="exampleInputEmail1">邮箱</label>
+        <input autocomplete="off" type="email" class="form-control" placeholder="邮箱">
       </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">密码</label>
+        <input autocomplete="off" type="password" class="form-control" placeholder="密码">
+      </div>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox">记住我
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">登录</button>
+    </form>
+    <div class="test-group">
+      <a class="btn-default btn">新闻测试</a>
     </div>
-  </div>
+  </section>
+
+
+
+
+      <md-button>111</md-button>
+
+
+
+
+
 </div>
